@@ -16,12 +16,11 @@ A vanilla one with a simple Module load but also another one that will require t
 *Note, ABX uses the vRA Proxy settings found at vracli proxy 
 
 # Requirements
-    vRA 8.X ( tested on 8.1 ) or vRA Cloud with ABX on-prem (Please note that Azure FaaS or AWS Lambda are currently not supporting Powershell)
-    Ubuntu 18.04.4 LTS ( You will need to stage your Powershell Scripts and Modules in Linux since vRA/vRO are Photon OS Based)
-    PowerShell 6.2.3 is the recommended version, however I am able to stage and install Modules with PowerShell 7.0.0
+    vRA 8.X ( tested on 8.1 ) or vRA Cloud with ABX on-prem
+    Ubuntu 18.04.4 LTS 
+    PowerShell 6.2.3 is the recommended version, however I am able to stage and install Modules with PowerShell 7.0.0 for this example
     
-    
- I would recommend to use the same Powershell version shiped with vRA 8.1 which can be found here 
+I would recommend to use the same Powershell version shiped with vRA 8.1 which can be found here 
  https://hub.docker.com/r/vmware/powerclicore/
  More details here
  https://github.com/vmware/powerclicore
