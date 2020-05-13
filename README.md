@@ -1,41 +1,51 @@
 # Create a ZIP package for Powershell extensibility in ABX ( and vRO ) actions including proprietary Powershell Modules and Proxy Options.
 
+There are a few methods of building the script for your extensibility actions:
 
-You can create a ZIP package that contains the Python script and dependencies used by your vRealize Automation Cloud Assembly extensibility actions.
+1) Writing your Powershell script directly in the extensibility action editor in vRealize Automation Cloud Assembly.
+( Please note that depending on the Powershell Modules, you could instruct to load them directly here ).
 
-There are two methods of building the script for your extensibility actions:
-
-Writing your script directly in the extensibility action editor in vRealize Automation Cloud Assembly.
-Creating your script on your local environment and adding it, with any relevant dependencies, to a ZIP package.
+2) Creating your script on your local Linux based Powershell environment, installed required Modules then bundle all together into ZIP package.
 By using a ZIP package, you can create a custom preconfigured template of action scripts and dependencies that you can import to vRealize Automation Cloud Assembly for use in extensibility actions.
 
-Furthermore, you can use a ZIP package in scenarios where modules associated with dependencies in your action script cannot be resolved by the vRealize Automation Cloud Assembly service, such as when your environment lacks Internet access.
+And some other possibles ways to do it.
 
-You can also use a ZIP package to create extensibility actions that contain multiple Python script files. Using multiple script files can be useful for organizing the structure of your extensibility action code.
+For this example I will focus on the second option for a couple of examples
+A vanilla one with a simple Module load but also another one that will require the explicit use of Proxy Settings as some Modules and Scripts instructions access that information differently  
+
+*Note, ABX uses the vRA Proxy settings found at vracli proxy 
 
 # Requirements
-    vRA 8.X or vRA Cloud with ABX on-prem (Please note that Azure FaaS or AWS Lambda are currently not supporting Powershell)
-    Ubuntu 18.04.4 LTS ( You will need to stage your Powershell Scripts and Modules in Linux since vRA/vRO are Photon OS
-    Powershell XXXXX
-    Module XXX
+    vRA 8.X ( tested on 8.1 ) or vRA Cloud with ABX on-prem (Please note that Azure FaaS or AWS Lambda are currently not supporting Powershell)
+    Ubuntu 18.04.4 LTS ( You will need to stage your Powershell Scripts and Modules in Linux since vRA/vRO are Photon OS Based)
+    PowerShell 6.2.3 is the recommended version, however I am able to stage and install Modules with PowerShell 7.0.0
+    
+    
+ I would recommend to use the same Powershell version shiped with vRA 8.1 which can be found here 
+ https://hub.docker.com/r/vmware/powerclicore/
+ More details here
+ https://github.com/vmware/powerclicore
 
 * Please note that the runtime of action-based extensibility in vRealize Automation Cloud Assembly is Linux-based.
-Therefore, any Python dependencies compiled in a Windows environment might make the generated ZIP package unusable for the creation of extensibility actions. Therefore, you must use a Linux shell.
+Therefore, any Python dependencies compiled in a Windows environment might make the generated ZIP package unusable for the creation of extensibility actions. Therefore, you must use a Linux shell ( Photon OS preferable but Ubuntu 18.04 would work ).
+
+
 
 # Install Powershell
 
-Ubuntu 18.04 ships with both Python 3 and Python 2 pre-installed. To make sure that our versions are up-to-date, let’s update and upgrade the system with the apt command to work with Ubuntu’s Advanced Packaging Tool:
+Ubuntu 18.04 you can install Powershell for Linux as follows:
 
 	sudo apt update
 	sudo apt -y upgrade
+	sudo apt-get install -y powershell
 	
-check the version of Python 3 that is installed in the system by typing:
+check the version of  by typing:
 
-	python3 -V
+	pwsh --version
 
 Output
 
-       Python 3.6.9
+       PowerShell 7.0.0
 
 To manage software packages for Python, let’s install pip, a tool that will install and manage programming packages like the requirements for our ABX Action
 
