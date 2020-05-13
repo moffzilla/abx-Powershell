@@ -14,16 +14,15 @@ Furthermore, you can use a ZIP package in scenarios where modules associated wit
 You can also use a ZIP package to create extensibility actions that contain multiple Python script files. Using multiple script files can be useful for organizing the structure of your extensibility action code.
 
 # Requirements
-    vRA 8.X or vRA Cloud with ABX or Azure FaaS or AWS Lambda and associated configured Cloud Accounts
-    Ubuntu 18.04.4 LTS
-    Python 3.6.9
-    pip 9.0.1
-    dnspython==1.16.0
+    vRA 8.X or vRA Cloud with ABX on-prem (Please note that Azure FaaS or AWS Lambda are currently not supporting Powershell)
+    Ubuntu 18.04.4 LTS ( You will need to stage your Powershell Scripts and Modules in Linux since vRA/vRO are Photon OS
+    Powershell XXXXX
+    Module XXX
 
 * Please note that the runtime of action-based extensibility in vRealize Automation Cloud Assembly is Linux-based.
 Therefore, any Python dependencies compiled in a Windows environment might make the generated ZIP package unusable for the creation of extensibility actions. Therefore, you must use a Linux shell.
 
-# Install Python 3
+# Install Powershell
 
 Ubuntu 18.04 ships with both Python 3 and Python 2 pre-installed. To make sure that our versions are up-to-date, let’s update and upgrade the system with the apt command to work with Ubuntu’s Advanced Packaging Tool:
 
