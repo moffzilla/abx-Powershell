@@ -13,7 +13,7 @@ And some other possibles ways to do it.
 For this example I will focus on the second option for a couple of examples
 A vanilla one with a simple Module load but also another one that will require the explicit use of Proxy Settings as some Modules and Scripts instructions access that information differently  
 
-*Note, ABX uses the vRA Proxy settings found at vracli proxy 
+*Note, ABX uses the vRA Proxy settings found at vracli proxy however some Powershell Modules requires you to expose it at enviroment level which it is what second example shows
 
 # Requirements
     vRA 8.X ( tested on 8.1 ) or vRA Cloud with ABX on-prem
@@ -21,13 +21,11 @@ A vanilla one with a simple Module load but also another one that will require t
     PowerShell 6.2.3 is the recommended version, however I am able to stage and install Modules with PowerShell 7.0.0 for this example
     
 I would recommend to use the same Powershell version shiped with vRA 8.1 which can be found here 
- https://hub.docker.com/r/vmware/powerclicore/
- More details here
- https://github.com/vmware/powerclicore
+ *https://hub.docker.com/r/vmware/powerclicore/
+ *More details here: https://github.com/vmware/powerclicore
 
-* Please note that the runtime of action-based extensibility in vRealize Automation Cloud Assembly is Linux-based.
-Therefore, any Python dependencies compiled in a Windows environment might make the generated ZIP package unusable for the creation of extensibility actions. Therefore, you must use a Linux shell ( Photon OS preferable but Ubuntu 18.04 would work ).
-
+Please note that the runtime of action-based extensibility in vRealize Automation Cloud Assembly is Linux-based.
+Therefore, any Powershell dependencies compiled in a Windows environment might make the generated ZIP package unusable for the creation of extensibility actions, always use a Linux shell ( Photon OS preferable but Ubuntu 18.04 would work ).
 
 
 # Install Powershell
@@ -46,9 +44,6 @@ Output
 
        PowerShell 7.0.0
 
-To manage software packages for Python, let’s install pip, a tool that will install and manage programming packages like the requirements for our ABX Action
-
-	sudo apt install -y python3-pip
 
 # Create and activate a new Python environment:
 
