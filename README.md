@@ -1,19 +1,46 @@
-# Create a ZIP package for Powershell extensibility in ABX ( and vRO ) actions including proprietary Powershell Modules and Proxy Options.
+# Create a ZIP package for Powershell extensibility in ABX ( and vRO ) actions
+# including proprietary Powershell Modules and Proxy Options.
 
-There are a few methods of building the script for your extensibility actions:
+There are a few methods of building the script for your extensibility actions
+Writing your Powershell script directly in the extensibility action editor in vRealize Automation Cloud Assembly.
+Please note that depending on the Powershell Modules, you could instruct to load them directly at the Action Dependencies
+e.g. 
+  ![az-latest](https://github.com/moffzilla/abx-Powershell/blob/master/media/az-latest.png)
+  
+Also note that this option is valid if you hace connectivity to the public repositories where the modules are stored.
 
-1) Writing your Powershell script directly in the extensibility action editor in vRealize Automation Cloud Assembly.
-( Please note that depending on the Powershell Modules, you could instruct to load them directly here ).
+In situations where you don't have access to those public repositories you need to pre-install those modules 
+and you do this by simply creating your main script on your local Linux based Powershell environment, pre-install the required Modules for your script then bundle all together into ZIP package that later you can import as a whole to vRA Cloud Assembly for use in extensibility actions.
 
-2) Creating your script on your local Linux based Powershell environment, installed required Modules then bundle all together into ZIP package.
-By using a ZIP package, you can create a custom preconfigured template of action scripts and dependencies that you can import to vRealize Automation Cloud Assembly for use in extensibility actions.
+Additionally, in some occasions, you may need to call a public service like MS Azure or any other that is only reachable behind a Proxy and depending of the nature of your Powershell Scripts or selected modules, e.g. some modules read their proxy settings from OS environment variables, in those situations you have to implicitly specify your proxy settings
 
-And some other possibles ways to do it.
+	$proxyString = "http://" + $context.proxy.host + ":" + $context.proxy.port
+	$Env:HTTP_PROXY = $proxyString
+	$Env:HTTPS_PROXY = $proxyString 
 
-For this example I will focus on the second option for a couple of examples
-A vanilla one with a simple Module load but also another one that will require the explicit use of Proxy Settings as some Modules and Scripts instructions access that information differently  
+These instructions will fetch the proxy settings from 'context' object of the function handler and set it as enviroment property. It is important to mention that ABX extensibility uses the same vRA Proxy settings 
 
-*Note, ABX uses the vRA Proxy settings found at vracli proxy however some Powershell Modules requires you to expose it at enviroment level which it is what second example shows
+You can verify your vRA Proxy settings with the command *vracli proxy 
+
+	root@cava-n-81-246 [ ~ ]# vracli proxy show
+	{
+	    "enabled": true,
+	    "host": "10.244.4.51",
+	    "java-proxy-exclude": "*.local|*.localdomain|localhost|10.244.*|192.168.*|172.16.*|kubernetes|cava-n-81-246.eng.vmware.com|10.149.81.246|*.eng.vmware.com",
+	    "port": 3128,
+	    "proxy-exclude": ".local,.localdomain,localhost,10.244.,192.168.,172.16.,kubernetes,cava-n-81-246.eng.vmware.com,10.149.81.246,.eng.vmware.com",
+	    "scheme": "http",
+	    "upstream_proxy_password_encoded": "",
+	    "upstream_proxy_user_encoded": "",
+	    "internal.proxy.config": "dns_v4_first on \nhttp_port 0.0.0.0:3128\nlogformat squid %ts.%03tu %6tr %>a %Ss/%03>Hs %<st %rm %ru %[un %Sh/%<a %mt\naccess_log stdio:/tmp/logger squid\ncoredump_dir /\ncache deny all \nappend_domain .prelude.svc.cluster.local\nacl mylan src 10.0.0.0/8\nacl mylan src 127.0.0.0/8\nacl mylan src 192.168.3.0/24\nacl proxy-exclude dstdomain .local\nacl proxy-exclude dstdomain .localdomain\nacl proxy-exclude dstdomain localhost\nacl proxy-exclude dstdomain 10.244.\nacl proxy-exclude dstdomain 192.168.\nacl proxy-exclude dstdomain 172.16.\nacl proxy-exclude dstdomain kubernetes\nacl proxy-exclude dstdomain 10.149.81.246\nacl proxy-exclude dstdomain .eng.vmware.com\nalways_direct allow proxy-exclude\nhttp_access allow mylan\nhttp_access deny all\n# End autogen configuration\n",
+	    "internal.proxy.config.type": "default"
+	}
+	root@cava-n-81-246 [ ~ ]#
+
+On top of that, using extension ".psm1" ( which is standard for dependencies modules for pwsh engine requirements ) is recommended instead the common ".ps1" for the handler (entrypoint) function file.
+This is relevant as all additional dependencies packaged will be automatically loaded, meaning that all the "imports" statements at beginning of the file are not needed and need to be removed. 
+
+Any pre-installed modules must be placed at root level in order to be automatically imported ( more in the example below )
 
 # Requirements
     vRA 8.X ( tested on 8.1 ) or vRA Cloud with ABX on-prem
