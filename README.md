@@ -1,5 +1,4 @@
-# Create a ZIP package for Powershell extensibility in ABX,
-# including proprietary Powershell Modules and Proxy Options.
+# Create a ZIP package including proprietary Powershell Modules for vRA ABX
 
 There are a few methods of building the script for your extensibility actions
 Writing your Powershell script directly in the extensibility action editor in vRealize Automation Cloud Assembly.
@@ -50,8 +49,10 @@ Any pre-installed modules must be placed at root level in order to be automatica
     PowerShell 6.2.3 is the recommended version, however I am able to stage and install Modules with PowerShell 7.0.0 for this example
     
 I would recommend to use the same Powershell version shiped with vRA 8.1 which can be found here 
- *https://hub.docker.com/r/vmware/powerclicore/
- *More details here: https://github.com/vmware/powerclicore
+
+https://hub.docker.com/r/vmware/powerclicore/
+
+ More details here: https://github.com/vmware/powerclicore
 
 Please note that the runtime of action-based extensibility in vRealize Automation Cloud Assembly is Linux-based.
 Therefore, any Powershell dependencies compiled in a Windows environment might make the generated ZIP package unusable for the creation of extensibility actions, always use a Linux shell ( Photon OS preferable but Ubuntu 18.04 would work ).
@@ -168,81 +169,61 @@ This will import all the default modules, you can manually remove the ones you d
 	root@ubuntu_server:~/abx-powershell/Modules# 
 
 
-My principal and only Python Script is "main.py"
-It is a basic sample for translating a MSISDN number into ENUM format calling dnspython's dns.e164.from_e164()
-it also resolves and lists the MX records for a given domain via dnspython's dns.resolver.query()
-and finally resolve A record with prebuilt python's socket library
+My principal and only Powershell Script is "handler.psm1"
+Here's an extract of the the whole script, please note the Proxy related instructions since vRA is behind a proxy and Powershell needs to load the proxy settings from enviroment
 
-/////////main.py/////////////////
+/////////handler.psm1/////////////////
 
-	import socket
-	import dns.resolver
-	import dns.e164
+	function handler {
+	  Param($context, $inputs)
+	  $inputsString = $inputs | ConvertTo-Json -Compress
+	  $DebugPreference = "Continue"
 
-	def handler(context, inputs):
-	    print('Action started.')
-	    msAddr = inputs["msisdn"]
-	    dnsMX = inputs["dnsMX"]
+	  $proxyString = "http://" + $context.proxy.host + ":" + $context.proxy.port
+	  $Env:HTTP_PROXY = $proxyString
+	  $Env:HTTPS_PROXY = $proxyString
 
-	    # Log Input Entries
-	    #print (inputs)
-	    #print (msAddr)
-	    #print (dnsMX)
+	  Write-Host $proxyString
+	  $proxyUri = new-object System.Uri($proxyString)
+	  [System.Net.WebRequest]::DefaultWebProxy = new-object System.Net.WebProxy ($proxyUri)
+	  Write-Host "Inputs were $inputsString"
+	  # From this point it is my script making calls to MS Azure
+	  .......
 
-	    # Converts E164 Address to ENUM with propietary library dnspython
-	    n = dns.e164.from_e164(msAddr)
-	    print ('My MSISDN:', dns.e164.to_e164(n), 'ENUM NAME Conversion:', n)
+Now let's package the main Script with the customized installed Modules
+Both your script and dependency elements must be stored at the root level of the ZIP package. 
+When creating the ZIP package in a Linux environment, you might encounter a problem where the package content is not stored at the root level. If you encounter this problem, create the package by running the zip -r command in your command-line shell.
 
-	    # Resolve DNS MX Query with propietary library dnspython
-	    answers = dns.resolver.query(dnsMX, 'MX')
-	    print ('Resolving MX Records for:', dnsMX)
-	    for rdata in answers:
-		print ('Host', rdata.exchange, 'has preference', rdata.preference)
+	root@ubuntu_server:~/powershell/abx-powershell# zip -r --exclude=*.zip -X VRA_Powershell_vro_05.zip .
+	 
 
-	    # Resolve AAA with prebuilt socket library
-	    addr1 = socket.gethostbyname(dnsMX)
-	    print('Resolving AAA Record:', addr1)
-
-	    return addr1
-
-Now let's package the main Script with the customized installed libraries
-Both your script and dependency elements must be stored at the root level of the ZIP package. When creating the ZIP package in a Linux environment, you might encounter a problem where the package content is not stored at the root level. If you encounter this problem, create the package by running the zip -r command in your command-line shell.
-
-	(vraDNSDev) root@ubuntu_server: cd ~/enviroments/vraDNSDev/vraDNS-action
-	(vraDNSDev) root@ubuntu_server: zip -r9 vraDNS-actionR08.zip *
-
-Let's use now the ZIP package to create an extensibility action script by importing it at vRA
+At this point we can use the ZIP package to create an extensibility action script by importing it at vRA
 Log In to vRA with a user having Cloud Assembly Permissions
 Go to [ Cloud Assembly ]--> [ Extensibility ] --> [ Actions ] --> [ Create a New Action ] and associate to your Project
 
-   ![New Action](https://github.com/moffzilla/vraDNS-action/blob/master/media/newAction.png) 
+   ![New Action](https://github.com/moffzilla/abx-Powershell//blob/master/media/newAction.png) 
 
-Instead of "Write Script", Select Import Package and import your zip file (e.g. vraDNS-actionR08.zip is a pre-staged working action) 
+Instead of "Write Script", Select Import Package and import your zip file (e.g. VRA_Powershell_vro_05.zip is a pre-staged working action) 
 
-   ![importAction](https://github.com/moffzilla/vraDNS-action/blob/master/media/importAction.png) 
+   ![importAction](https://github.com/moffzilla/abx-Powershell/n/blob/master/media/importAction.png) 
 
 Define inputs required by the script ( see defaults below ) and define the Main Function as point of entry 
 
-   ![inputAction](https://github.com/moffzilla/vraDNS-action/blob/master/media/inputAction.png) 
+   ![inputAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/inputAction.png) 
 
-Please note that for actions imported from a ZIP package, the main function must also include the name of the script file that contains the entry point. For example, if your main script file is titled main.py and your entry point is handler (context, inputs), the name of the main function must be main.handler.
+Please note that for actions imported from a ZIP package, the main function must also include the name of the script file that contains the entry point. For example, if your main script file is titled handler.py and your entry point is handler (context, inputs), the name of the main function must be *handler.handler.
 
 You can select your prefered FaaS Provider or simply let vRA to do it for you by selecting "Auto"
 
 Save and Test your ABX Action
 
- ![saveAction](https://github.com/moffzilla/vraDNS-action/blob/master/media/saveAction.png) 
+ ![saveAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/saveAction.png) 
  
  Click on "See Details" to see your Python Script execution details
- Please note that the first time you execute it, it takes more time as it needs to upload your action to your local or remote FaaS providers
+ Please note that the first time you execute it, it takes more time as it needs to upload your action to your local or remote FaaS providers, subsequent executions will be faster.
 
- ![detailsAction](https://github.com/moffzilla/vraDNS-action/blob/master/media/detailsAction.png)
+ ![detailsAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/detailsAction.png)
  
-You can change the input and FaaS provider ( please note that the MSISDN is in international format and dnsMX don't need WWW as it is an EMAIL Exchange Record)
+You can change the input and FaaS provider as needed.
 
-From this point you could create an Extensibility Subscrition or expose this action at vRA's Service Broker Catalog
 
-Don't forget to deactivate your Python enviroment
-
-	(vraDNSDev) root@ubuntu_server:~/enviroments# deactivate
-	root@ubuntu_server:~/enviroments#
