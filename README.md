@@ -1,11 +1,13 @@
-# Create a ZIP package for Powershell extensibility in ABX ( and vRO ) actions
+# Create a ZIP package for Powershell extensibility in ABX,
 # including proprietary Powershell Modules and Proxy Options.
 
 There are a few methods of building the script for your extensibility actions
 Writing your Powershell script directly in the extensibility action editor in vRealize Automation Cloud Assembly.
 Please note that depending on the Powershell Modules, you could instruct to load them directly at the Action Dependencies
 e.g. 
+
   ![az-latest](https://github.com/moffzilla/abx-Powershell/blob/master/media/az-latest.png)
+  
   
 Also note that this option is valid if you hace connectivity to the public repositories where the modules are stored.
 
@@ -72,39 +74,99 @@ Output
        PowerShell 7.0.0
 
 
-# Create and activate a new Python environment:
+# Pre-install your Powershell Modules your action root folder
 
-Create an activate a python3 development environment 
-( Please note my $HOME "/root" may be different than yours please adapt the folder locations )
+In your local staging system create your ABX action root folder 
 
-	root@ubuntu_server: mkdir environments
-	root@ubuntu_server: python3 -m vraDNSDev 
+	mkdir abx-powershell
+	cd abx-powershell
+	mkdir Modules
 	
-Create and move to the root folder for your ABX Action
+Install your modules from PSGallery Repository https://www.powershellgallery.com/
 
-	(vraDNSDev) root@ubuntu_server: mkdir vraDNS-action    
-	(vraDNSDev) root@ubuntu_server: cd /root/enviroments/vraDNSDev/vraDNS-action
+	pwsh -c Get-PSRepository
+	
+	Name                      InstallationPolicy   SourceLocation
+	----                      ------------------   --------------
+	PSGallery                 Untrusted            https://www.powershellgallery.com/api/v2
 
-# Define your library requirements and install them with PIP at your action root folder
+In this example, the "Az" Module will be used https://www.powershellgallery.com/packages/Az/4.1.0
 
-Copy or Create then place the requirements.txt inside your ABX action root folder 
-For our example only the "dnspython==1.16.0" propetary library is needed, which it is not included in the standard Python or FaaS Engines
-
-	(vraDNSDev) root@ubuntu_server: vi requirements.txt 
-		dnspython==1.16.0     
+	pwsh -c "Save-Module -Name Az -Path ./Modules/ -Repository PSGallery"  
 		
-Now install "dnspython==1.16.0" in your Python virtual enviroment
+This will import all the default modules, you can manually remove the ones you don't need and/or install specifially the ones your script requires
 
-	(vraDNSDev) root@ubuntu_server:  pip install -r requirements.txt --target=/root/enviroments/vraDNSDev/vraDNS-action   
+	root@ubuntu_server:~/abx-powershell/Modules#  ls -lrt
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Maintenance
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Media
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Monitor
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.OperationalInsights
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.PrivateDns
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.RecoveryServices
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Resources
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.ServiceBus
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.ServiceFabric
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Accounts
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Accounts
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Advisor
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Aks
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.AnalysisServices
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.ApiManagement
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.ApplicationInsights
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Automation
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Batch
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Billing
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Cdn
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.CognitiveServices
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Compute
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.ContainerInstance
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.ContainerRegistry
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.DataBoxEdge
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.DataFactory
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.DataLakeAnalytics
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.DataLakeStore
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.DeploymentManager
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.DevTestLabs
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Dns
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.EventGrid
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.EventHub
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.FrontDoor
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Functions
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.HDInsight
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.HealthcareApis
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.IotHub
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.KeyVault
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.LogicApp
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.MachineLearning
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Maintenance
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.ManagedServices
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.MarketplaceOrdering
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Media
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Monitor
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Network
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.NotificationHubs
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.OperationalInsights
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.PolicyInsights
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.PowerBIEmbedded
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.PrivateDns
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.RecoveryServices
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.RedisCache
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Relay
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Resources
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.ServiceBus
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.ServiceFabric
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.SignalR
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Sql
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.SqlVirtualMachine
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Storage
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.StorageSync
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.StreamAnalytics
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Support
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.TrafficManager
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Websites
+	drwxr-xr-x 3 root root 4096 May 22 02:50 Az
+	root@ubuntu_server:~/abx-powershell/Modules# 
 
-You should see the following folders:
-
-	(vraDNSDev) root@ubuntu_server:~/enviroments/vraDNSDev/vraDNS-action# ls -lrt
-	total 408
-	drwxr-xr-x 4 root root   4096 Mar  3 01:00 dns
-	drwxr-xr-x 2 root root   4096 Mar  3 01:00 dnspython-1.16.0.dist-info
-	-rw-r--r-- 1 root root    759 Mar  3 17:21 main.py
-	-rw-r--r-- 1 root root     18 Mar  3 17:46 requirements.txt
 
 My principal and only Python Script is "main.py"
 It is a basic sample for translating a MSISDN number into ENUM format calling dnspython's dns.e164.from_e164()
