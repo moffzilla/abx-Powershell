@@ -19,9 +19,9 @@ Additionally, in some occasions, you may need to call a public service like MS A
 	$Env:HTTP_PROXY = $proxyString
 	$Env:HTTPS_PROXY = $proxyString 
 
-These instructions will fetch the proxy settings from 'context' object of the function handler and set it as enviroment property. It is important to mention that ABX extensibility uses the same vRA Proxy settings 
+These instructions will fetch the proxy settings from 'context' object of the function handler and set it as environment property. It is important to mention that ABX extensibility uses the same vRA Proxy settings 
 
-You can verify your vRA Proxy settings with the command *vracli proxy 
+You can verify your vRA Proxy settings with the command *vracli proxy you have to implicitly specify your proxy settings
 
 	root@cava-n-81-246 [ ~ ]# vracli proxy show
 	{
@@ -75,7 +75,7 @@ Output
        PowerShell 7.0.0
 
 
-# Pre-install your Powershell Modules your action root folder
+# Pre-install your Powershell Modules in your action root folder
 
 In your local staging system create your ABX action root folder 
 
@@ -95,7 +95,7 @@ In this example, the "Az" Module will be used https://www.powershellgallery.com/
 
 	pwsh -c "Save-Module -Name Az -Path ./Modules/ -Repository PSGallery"  
 		
-This will import all the default modules, you can manually remove the ones you don't need and/or install specifially the ones your script requires
+This will import all the default modules, you can manually remove the ones you don't need and/or install specifically  the ones your script requires ( it can be loaded into execution faster )
 
 	root@ubuntu_server:~/abx-powershell/Modules#  ls -lrt
 	drwxr-xr-x 3 root root 4096 May 22 02:50 Az.Maintenance
@@ -173,8 +173,8 @@ My principal and only Powershell Script is
 	
 	handler.psm1
 	
-Here's an extract of the the whole script, please note the Proxy related instructions since vRA is behind a proxy and Powershell needs to load the proxy settings from enviroment
-Also there is not need to indicate to load any modules, this will be done automatically.
+Here's an extract of the whole script, please note the Proxy related instructions since vRA is behind a proxy and Powershell needs to load the proxy settings from environment
+Also there is no need to indicate to load any modules, this will be done automatically.
 
 /////////handler.psm1/////////////////
 
@@ -196,7 +196,7 @@ Also there is not need to indicate to load any modules, this will be done automa
 
 Now let's package the main handler.psm1 script with the customized installed Modules
 Both your script and dependency elements must be stored at the root level of the ZIP package. 
-When creating the ZIP package in a Linux environment, you might encounter a problem where the package content is not stored at the root level. If you encounter this problem, create the package by running the zip -r command in your command-line shell.
+When creating the ZIP package in a Linux environment, you might encounter a problem where the package content is not stored at the root level, make sure to create the package by running the zip -r command in your command-line shell.
 
 	root@ubuntu_server:~/powershell/abx-powershell# zip -r --exclude=*.zip -X VRA_Powershell_vro_05.zip .
 	 
