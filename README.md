@@ -216,11 +216,8 @@ Please note that for actions imported from a ZIP package, the main function must
 You can select your prefered FaaS Provider or simply let vRA to do it for you by selecting "Auto"
 
 Save and Test your ABX Action
-
- ![saveAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/saveAction.png) 
- 
- Click on "See Details" to see your Powershell Script execution details
- Please note that the first time you execute it, it takes more time as it needs to upload your action to your local or remote FaaS providers, subsequent executions will be faster.
+Click on "See Details" to see your Powershell Script execution details
+Please note that the first time you execute it, it takes more time as it needs to upload your action to your local or remote FaaS providers, subsequent executions will be faster.
 
  ![detailsAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/detailsAction.png)
  
