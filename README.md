@@ -171,6 +171,7 @@ This will import all the default modules, you can manually remove the ones you d
 
 My principal and only Powershell Script is "handler.psm1"
 Here's an extract of the the whole script, please note the Proxy related instructions since vRA is behind a proxy and Powershell needs to load the proxy settings from enviroment
+Also there is not need to indicate to load any modules, this will be done automatically.
 
 /////////handler.psm1/////////////////
 
@@ -196,18 +197,17 @@ When creating the ZIP package in a Linux environment, you might encounter a prob
 
 	root@ubuntu_server:~/powershell/abx-powershell# zip -r --exclude=*.zip -X VRA_Powershell_vro_05.zip .
 	 
-
 At this point we can use the ZIP package to create an extensibility action script by importing it at vRA
 Log In to vRA with a user having Cloud Assembly Permissions
 Go to [ Cloud Assembly ]--> [ Extensibility ] --> [ Actions ] --> [ Create a New Action ] and associate to your Project
 
    ![New Action](https://github.com/moffzilla/abx-Powershell//blob/master/media/newAction.png) 
 
-Instead of "Write Script", Select Import Package and import your zip file (e.g. VRA_Powershell_vro_05.zip is a pre-staged working action) 
+Select "Powershell" and Instead of "Write Script", Select Import Package and import your zip file (e.g. VRA_Powershell_vro_05.zip is a pre-staged working action) 
 
    ![importAction](https://github.com/moffzilla/abx-Powershell/n/blob/master/media/importAction.png) 
 
-Define inputs required by the script ( see defaults below ) and define the Main Function as point of entry 
+Define inputs required by the script ( see defaults below ) and define the Main Function as point of entry *handler.handler
 
    ![inputAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/inputAction.png) 
 
@@ -219,7 +219,7 @@ Save and Test your ABX Action
 
  ![saveAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/saveAction.png) 
  
- Click on "See Details" to see your Python Script execution details
+ Click on "See Details" to see your Powershell Script execution details
  Please note that the first time you execute it, it takes more time as it needs to upload your action to your local or remote FaaS providers, subsequent executions will be faster.
 
  ![detailsAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/detailsAction.png)
