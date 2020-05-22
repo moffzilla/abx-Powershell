@@ -203,15 +203,19 @@ Go to [ Cloud Assembly ]--> [ Extensibility ] --> [ Actions ] --> [ Create a New
 
    ![New Action](https://github.com/moffzilla/abx-Powershell/blob/master/media/newAction.png) 
 
-Select "Powershell" and Instead of "Write Script", Select Import Package and import your zip file (e.g. VRA_Powershell_vro_05.zip is a pre-staged working action) 
+Select "Powershell" and Instead of "Write Script", Select Import Package and import your zip file 
+	
+	(e.g. VRA_Powershell_vro_05.zip is a pre-staged working action) 
 
    ![importAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/importAction.png) 
 
-Define inputs required by the script ( see defaults below ) and define the Main Function as point of entry *handler.handler
+Define inputs required by the script ( see defaults below ) and define the Main Function as point of entry 
+
+	handler.handler
 
    ![inputAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/inputAction.png) 
 
-Please note that for actions imported from a ZIP package, the main function must also include the name of the script file that contains the entry point. For example, if your main script file is titled handler.py and your entry point is handler (context, inputs), the name of the main function must be *handler.handler.
+Please note that for actions imported from a ZIP package, the main function must also include the name of the script file that contains the entry point. 
 
 You can select your prefered FaaS Provider or simply let vRA to do it for you by selecting "Auto"
 
