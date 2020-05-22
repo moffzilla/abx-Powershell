@@ -169,7 +169,10 @@ This will import all the default modules, you can manually remove the ones you d
 	root@ubuntu_server:~/abx-powershell/Modules# 
 
 
-My principal and only Powershell Script is "handler.psm1"
+My principal and only Powershell Script is 
+	
+	handler.psm1
+	
 Here's an extract of the the whole script, please note the Proxy related instructions since vRA is behind a proxy and Powershell needs to load the proxy settings from enviroment
 Also there is not need to indicate to load any modules, this will be done automatically.
 
@@ -191,7 +194,7 @@ Also there is not need to indicate to load any modules, this will be done automa
 	  # From this point it is my script making calls to MS Azure
 	  .......
 
-Now let's package the main Script with the customized installed Modules
+Now let's package the main handler.psm1 script with the customized installed Modules
 Both your script and dependency elements must be stored at the root level of the ZIP package. 
 When creating the ZIP package in a Linux environment, you might encounter a problem where the package content is not stored at the root level. If you encounter this problem, create the package by running the zip -r command in your command-line shell.
 
