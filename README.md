@@ -201,11 +201,11 @@ At this point we can use the ZIP package to create an extensibility action scrip
 Log In to vRA with a user having Cloud Assembly Permissions
 Go to [ Cloud Assembly ]--> [ Extensibility ] --> [ Actions ] --> [ Create a New Action ] and associate to your Project
 
-   ![New Action](https://github.com/moffzilla/abx-Powershell//blob/master/media/newAction.png) 
+   ![New Action](https://github.com/moffzilla/abx-Powershell/blob/master/media/newAction.png) 
 
 Select "Powershell" and Instead of "Write Script", Select Import Package and import your zip file (e.g. VRA_Powershell_vro_05.zip is a pre-staged working action) 
 
-   ![importAction](https://github.com/moffzilla/abx-Powershell/n/blob/master/media/importAction.png) 
+   ![importAction](https://github.com/moffzilla/abx-Powershell/blob/master/media/importAction.png) 
 
 Define inputs required by the script ( see defaults below ) and define the Main Function as point of entry *handler.handler
 
